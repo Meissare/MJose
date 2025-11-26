@@ -1,0 +1,66 @@
+mport { Calendar, Clock, MapPin, Ticket } from 'lucide-react';
+import { CulturalEvent } from '../App';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { ImageWithFallback } from './figma/ImageWithFallback';
+ 
+interface EventCardProps {
+  event: CulturalEvent;
+}
+ 
+export function EventCard({ event }: EventCardProps) {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+ 
+  return (
+    <Card className="overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col">
+      <div className="relative h-48 overflow-hidden">
+        <ImageWithFallback
+          src={event.image}
+          alt={event.title}
+          className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+        />
+        <Badge className="absolute top-3 right-3 bg-white/90 text-purple-700 hover:bg-white">
+          {event.category}
+        </Badge>
+      </div>
+     
+      <CardHeader>
+        <CardTitle className="line-clamp-2">{event.title}</CardTitle>
+        <CardDescription className="line-clamp-2">{event.description}</CardDescription>
+      </CardHeader>
+     
+      <CardContent className="space-y-2 flex-grow">
+        <div className="flex items-center gap-2 text-gray-600">
+          <Calendar className="size-4" />
+          <span>{formatDate(event.date)}</span>
+        </div>
+        <div className="flex items-center gap-2 text-gray-600">
+          <Clock className="size-4" />
+          <span>{event.time}</span>
+        </div>
+        <div className="flex items-center gap-2 text-gray-600">
+          <MapPin className="size-4" />
+          <span>{event.location} • {event.distance} km</span>
+        </div>
+        <div className="flex items-center gap-2 text-purple-600">
+          <Ticket className="size-4" />
+          <span>{event.price}</span>
+        </div>
+      </CardContent>
+     
+      <CardFooter>
+        <Button className="w-full bg-purple-600 hover:bg-purple-700">
+          Ver detalles
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+}
