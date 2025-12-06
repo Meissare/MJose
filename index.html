@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Juego 3 en Raya</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 40px;
+    }
+    h1 { margin-bottom: 20px; }
+    .tablero {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 8px;
+    }
+    .celda {
+      width: 100px;
+      height: 100px;
+      background: #f0f0f0;
+      border: 2px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+    .estado {
+      margin: 20px;
+      font-weight: bold;
+    }
+    button {
+      padding: 8px 12px;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>3 en Raya</h1>
+  <div class="estado" id="estado">Turno: X</div>
+  <div class="tablero" id="tablero"></div>
+  <button id="reiniciar">Reiniciar</button>
+
+  <script>
+    const tableroEl = document.getElementById("tablero");
+    const estadoEl = document.getElementById("estado");
+    const reiniciarBtn = document.getElementById("reiniciar");
+
+    let tablero = Array(9).fill("");
+    let turno = "X";
+    let terminado = false;
+
+    const combinaciones = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+    function render() {
+      tableroEl.innerHTML = "";
+      tablero.forEach((valor, i) => {
+        const celda = document.createElement("div");
+        celda.className = "celda";
+        celda.textContent = valor;
+        celda.addEventListener("click", () => clickCelda(i));
+        tableroEl.appendChild(celda);
+      });
+      estadoEl.textContent = terminado ? mensajeFinal() : `Turno: ${turno}`;
+    }
+
+    function clickCelda(i) {
+      if (terminado || tablero[i] !== "") return;
+      tablero[i] = turno;
+      const ganador = hayGanador();
+      if (ganador) {
+        terminado = true;
+      } else if (tablero.every(c => c !== "")) {
+        terminado = true;
+      } else {
+        turno = turno === "X" ? "O" : "X";
+      }
+      render();
+    }
+
+    function hayGanador() {
+      for (const [a,b,c] of combinaciones) {
+        if (tablero[a] && tablero[a] === tablero[b] && tablero[a] === tablero[c]) {
+          return tablero[a];
+        }
+      }
+      return null;
+    }
+
+    function mensajeFinal() {
+      const g = hayGanador();
+      if (g) return `¡Gana ${g}!`;
+      return "¡Empate!";
+    }
+
+    reiniciarBtn.addEventListener("click", () => {
+      tablero = Array(9).fill("");
+      turno = "X";
+      terminado = false;
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
